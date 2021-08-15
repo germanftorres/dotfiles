@@ -8,4 +8,6 @@ set encoding=utf-8
 set nu			" show line numbers, try maybe rnu?
 set nowrap		" never wrap lines
 
+" appearanche
+colorscheme nord	" a simple blueish theme
 
