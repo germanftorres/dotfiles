@@ -2,10 +2,13 @@
 
 from typing import List  # noqa: F401
 
+from libqtile import qtile
 from libqtile import bar, layout, widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
+
+from qtile_extras.widget.decorations import BorderDecoration
 
 mod = "mod4"
 terminal = guess_terminal()
@@ -16,7 +19,7 @@ keys = [
     # essential tools
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
     Key([mod], "b", lazy.spawn(browser), desc="Launch terminal"),
-    
+
     # A list of available commands that can be bound to keys can be found
     # at https://docs.qtile.org/en/latest/manual/config/lazy.html
 
@@ -54,7 +57,7 @@ keys = [
     # Unsplit = 1 window displayed, like Max layout, but still with
     # multiple stack panes
     Key([mod, "shift"], "Return", lazy.layout.toggle_split(), desc="Toggle between split and unsplit sides of stack"),
- 
+
     # Toggle between different layouts as defined below
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
@@ -69,7 +72,7 @@ keys = [
 
 groups = [Group("1 term", layout="columns"),
     Group("2 editor", layout="columns"),
-    Group("3 WWW", layout="columns"),
+    Group("3 www", layout="columns"),
     Group("a", layout="columns"),
     Group("b", layout="columns"),
 
@@ -119,38 +122,224 @@ layouts = [
     # layout.Zoomy(),
 ]
 
+
+colors = [["#282c34", "#282c34"],
+          ["#1c1f24", "#1c1f24"],
+          ["#dfdfdf", "#dfdfdf"],
+          ["#ff6c6b", "#ff6c6b"],
+          ["#98be65", "#98be65"],
+          ["#da8548", "#da8548"],
+          ["#51afef", "#51afef"],
+          ["#c678dd", "#c678dd"],
+          ["#46d9ff", "#46d9ff"],
+          ["#a9a1e1", "#a9a1e1"]]
+
+
 widget_defaults = dict(
-    font='sans',
-    fontsize=12,
-    padding=3,
+    font="Noto Sans Bold",
+    fontsize=16,
+    padding=2,
+    background=colors[1]
 )
+
 extension_defaults = widget_defaults.copy()
 
-screens = [
-    Screen(
-        bottom=bar.Bar(
-            [
-                widget.CurrentLayout(),
-                widget.GroupBox(),
-                widget.Prompt(),
-                widget.WindowName(),
-                widget.Chord(
-                    chords_colors={
-                        'launch': ("#ff0000", "#ffffff"),
-                    },
-                    name_transform=lambda name: name.upper(),
+def init_widgets_list():
+    widget_list = [
+        widget.Sep(
+            linewidth = 0,
+            padding = 6,
+            foreground = colors[2],
+            background = colors[0]
+            ),
+        widget.GroupBox(
+            font = "Noto Sans Bold",
+            fontsize = 16,
+            margin_y = 3,
+            margin_x = 0,
+            padding_y = 5,
+            padding_x = 3,
+            borderwidth = 3,
+            active = colors[2],
+            inactive = colors[4],
+            rounded = False,
+            highlight_color = colors[1],
+            highlight_method = "line",
+            this_current_screen_border = colors[6],
+            this_screen_border = colors [4],
+            other_current_screen_border = colors[6],
+            other_screen_border = colors[4],
+            foreground = colors[2],
+            background = colors[0]
+            ),
+        widget.TextBox(
+                text = '|',
+                font = "Noto Sans Bold",
+                background = colors[0],
+                foreground = '474747',
+                padding = 2,
+                fontsize = 16
+                ),            
+        widget.WindowName(
+                foreground = colors[6],
+                background = colors[0],
+                padding = 0
+                ),            
+        # widget.Spacer(),                
+        widget.CurrentLayout(
+            foreground = colors[2],
+            background = colors[0],
+            padding = 5            
+            ),
+        widget.Systray(
+            background = colors[0],
+            padding = 5
+            ),
+        # widget.ThermalSensor(
+        #     foreground = colors[4],
+        #     background = colors[0],
+        #     threshold = 90,
+        #     fmt = 'Temp: {}',
+        #     padding = 5,
+        #     decorations=[
+        #         BorderDecoration(
+        #             colour = colors[4],
+        #             border_width = [0, 0, 2, 0],
+        #             padding_x = 5,
+        #             padding_y = None,
+        #         )
+        #     ],
+        #     ),
+        widget.Sep(
+            linewidth = 0,
+            padding = 6,
+            foreground = colors[0],
+            background = colors[0]
+            ),            
+        widget.Memory(
+                foreground = colors[9],
+                background = colors[0],
+                mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(terminal + ' -e htop')},
+                fmt = 'Mem: {}',
+                padding = 5,
+                decorations=[
+                    BorderDecoration(
+                        colour = colors[9],
+                        border_width = [0, 0, 2, 0],
+                        padding_x = 5,
+                        padding_y = None,
+                    )
+                ],
                 ),
-                widget.TextBox("my config", name="default"),
-                widget.TextBox("Press &lt;M-r&gt; to spawn", foreground="#d75f5f"),
-                widget.Systray(),
-                widget.Clock(format='%Y-%m-%d %a %I:%M %p'),
-                widget.QuickExit(),
+        widget.Sep(
+                linewidth = 0,
+                padding = 6,
+                foreground = colors[0],
+                background = colors[0]
+                ),                    
+        widget.Volume(
+            foreground = colors[7],
+            background = colors[0],
+            fmt = 'Vol: {}',
+            padding = 5,
+            decorations=[
+                BorderDecoration(
+                    colour = colors[7],
+                    border_width = [0, 0, 2, 0],
+                    padding_x = 5,
+                    padding_y = None,
+                )
             ],
-            24,
-            # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
-            # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
-        ),
-    ),
+            ),
+        widget.Sep(
+            linewidth = 0,
+            padding = 6,
+            foreground = colors[0],
+            background = colors[0]
+            ),
+        widget.KeyboardLayout(
+            configured_keyboards = ['es', 'us'],
+            foreground = colors[8],
+            background = colors[0],
+            fmt = 'Keyboard: {}',
+            padding = 5,
+            decorations=[
+                BorderDecoration(
+                    colour = colors[8],
+                    border_width = [0, 0, 2, 0],
+                    padding_x = 5,
+                    padding_y = None,
+                )
+            ],
+            ),
+        widget.Sep(
+                linewidth = 0,
+                padding = 6,
+                foreground = colors[0],
+                background = colors[0]
+                ),
+        # widget.AnalogueClock(
+        #         background = colors[0],
+        #         face_shape = "square",
+        #         face_background = colors[6],
+        #         face_border_colour = colors[6],
+        #         face_border_width = 4,
+        #         padding = 5
+        #         ),
+        widget.Clock(
+                foreground = colors[6],
+                background = colors[0],
+                format = "%A, %B %d - %H:%M ",
+                decorations=[
+                    BorderDecoration(
+                        colour = colors[6],
+                        border_width = [0, 0, 2, 0],
+                        padding_x = 5,
+                        padding_y = None,
+                    )
+                ],
+                ),
+        # widget.Sep(
+        #         linewidth = 0,
+        #         padding = 6,
+        #         foreground = colors[0],
+        #         background = colors[0]
+        #         ),        
+
+    ]
+    return widget_list
+
+
+# pepe_list = init_widgets_list()
+
+screens = [
+
+    Screen(top=bar.Bar(widgets=init_widgets_list(), size=24)),
+    # Screen(
+
+    #     top=bar.Bar(
+    #         [
+
+    #             widget.GroupBox(),
+    #             widget.Prompt(),
+    #             widget.WindowName(),
+    #             widget.Chord(
+    #                 chords_colors={
+    #                     'launch': ("#ff0000", "#ffffff"),
+    #                 },
+    #                 name_transform=lambda name: name.upper(),
+    #             ),
+    #             widget.TextBox("my config 2", name="default"),
+    #             widget.TextBox("Press &lt;M-r&gt; to spawn", foreground="#d75f5f"),
+    #             widget.Systray(),
+    #             widget.Clock(format='%Y-%m-%d %a %I:%M %p'),
+    #             widget.QuickExit(),
+    #         ],
+    #         24,
+    #         # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
+    #         # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
+    #     ),
+    #),
 ]
 
 # Drag floating layouts.
