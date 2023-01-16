@@ -3,12 +3,13 @@
 from typing import List  # noqa: F401
 
 from libqtile import qtile
-from libqtile import bar, layout, widget
+from libqtile import bar, layout
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 
-from qtile_extras.widget.decorations import BorderDecoration
+from qtile_extras import widget
+from qtile_extras.widget.decorations import BorderDecoration, PowerLineDecoration
 
 mod = "mod4"
 terminal = guess_terminal()
@@ -137,10 +138,16 @@ colors = [["#282c34", "#282c34"],
 
 widget_defaults = dict(
     font="Noto Sans Bold",
-    fontsize=16,
+    fontsize=18,
     padding=2,
     background=colors[1]
 )
+
+decorations = {
+    "decorations": [
+        PowerLineDecoration(path="arrow_right")
+    ]
+}
 
 extension_defaults = widget_defaults.copy()
 
@@ -191,10 +198,10 @@ def init_widgets_list():
             background = colors[0],
             padding = 5            
             ),
-        widget.Systray(
-            background = colors[0],
-            padding = 5
-            ),
+        # widget.Systray(
+        #     background = colors[0],
+        #     padding = 5
+        #     ),
         # widget.ThermalSensor(
         #     foreground = colors[4],
         #     background = colors[0],
@@ -214,48 +221,37 @@ def init_widgets_list():
             linewidth = 0,
             padding = 6,
             foreground = colors[0],
-            background = colors[0]
+            background = colors[0],
+            **decorations            
             ),            
         widget.Memory(
-                foreground = colors[9],
-                background = colors[0],
-                mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(terminal + ' -e htop')},
-                fmt = 'Mem: {}',
-                padding = 5,
-                decorations=[
-                    BorderDecoration(
-                        colour = colors[9],
-                        border_width = [0, 0, 2, 0],
-                        padding_x = 5,
-                        padding_y = None,
-                    )
-                ],
-                ),
-        widget.Sep(
-                linewidth = 0,
-                padding = 6,
-                foreground = colors[0],
-                background = colors[0]
-                ),                    
-        widget.Volume(
-            foreground = colors[7],
-            background = colors[0],
-            fmt = 'Vol: {}',
+            foreground = colors[9],
+            background = colors[1],
+            mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn(terminal + ' -e htop')},
+            fmt = 'Mem: {}',
             padding = 5,
-            decorations=[
-                BorderDecoration(
-                    colour = colors[7],
-                    border_width = [0, 0, 2, 0],
-                    padding_x = 5,
-                    padding_y = None,
-                )
-            ],
+            **decorations,
             ),
         widget.Sep(
             linewidth = 0,
             padding = 6,
             foreground = colors[0],
-            background = colors[0]
+            background = colors[0],
+            **decorations,
+            ),                    
+        widget.Volume(
+            foreground = colors[7],
+            background = colors[1],
+            fmt = 'Vol: {}',
+            padding = 5,
+            **decorations,
+            ),
+        widget.Sep(
+            linewidth = 0,
+            padding = 6,
+            foreground = colors[0],
+            background = colors[0],
+            **decorations,
             ),
         widget.KeyboardLayout(
             configured_keyboards = ['es', 'us'],
@@ -263,21 +259,15 @@ def init_widgets_list():
             background = colors[0],
             fmt = 'Keyboard: {}',
             padding = 5,
-            decorations=[
-                BorderDecoration(
-                    colour = colors[8],
-                    border_width = [0, 0, 2, 0],
-                    padding_x = 5,
-                    padding_y = None,
-                )
-            ],
+            **decorations,
             ),
         widget.Sep(
-                linewidth = 0,
-                padding = 6,
-                foreground = colors[0],
-                background = colors[0]
-                ),
+            linewidth = 0,
+            padding = 6,
+            foreground = colors[0],
+            background = colors[0],
+            **decorations,            
+            ),
         # widget.AnalogueClock(
         #         background = colors[0],
         #         face_shape = "square",
@@ -289,15 +279,8 @@ def init_widgets_list():
         widget.Clock(
                 foreground = colors[6],
                 background = colors[0],
-                format = "%A, %B %d - %H:%M ",
-                decorations=[
-                    BorderDecoration(
-                        colour = colors[6],
-                        border_width = [0, 0, 2, 0],
-                        padding_x = 5,
-                        padding_y = None,
-                    )
-                ],
+                format = "%c",
+                          
                 ),
         # widget.Sep(
         #         linewidth = 0,
